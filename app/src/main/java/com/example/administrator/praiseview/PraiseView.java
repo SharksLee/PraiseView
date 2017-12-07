@@ -195,7 +195,7 @@ public class PraiseView extends LinearLayout implements View.OnClickListener {
             valueAnimator.cancel();
         }
         valueAnimator = ValueAnimator.ofInt(0, mCircleMaxRadius);
-        valueAnimator.setDuration(600);
+        valueAnimator.setDuration(400);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {

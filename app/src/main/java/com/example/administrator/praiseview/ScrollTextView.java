@@ -11,6 +11,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 
@@ -37,19 +38,9 @@ public class ScrollTextView extends View {
      */
     private boolean toBigger;
     private int mTextSize;
-    //文本颜色
     private
     @ColorInt
     int mTextColor;
-    // 文本可点击颜色
-    private
-    @ColorInt
-    int mClickTextColor;
-    private
-    @ColorInt
-    int mTextEndColor;
-    @ColorInt
-    int mTextStartColor;
     private Paint mTextPaint;
     private float mOldOffsetY;
     private float mNewOffsetY;
@@ -87,15 +78,11 @@ public class ScrollTextView extends View {
 
     private void initPaint() {
         mTextPaint.setTextSize(mTextSize);
+        mTextPaint.setColor(mTextColor);
         mSingleTextWidth = mTextPaint.measureText("0");
-        mTextStartColor = mTextColor;
-        mTextEndColor = ColorUtils.setAlphaComponent(mTextStartColor, 0);
         mStartX = getPaddingLeft();
     }
 
-    public void setClickTextColor(@ColorInt int textColor) {
-        mClickTextColor = textColor;
-    }
 
     public void setTextColorAndSize(@ColorInt int textColor, @IntRange(from = 0) int textSize) {
         mTextColor = textColor;
@@ -173,7 +160,6 @@ public class ScrollTextView extends View {
     public void bindData(int value) {
         mOriginValue = value;
         calculateChangeNum(0);
-        refreshColor();
         postInvalidate();
     }
 
@@ -194,7 +180,6 @@ public class ScrollTextView extends View {
 
     private void praise() {
         calculateChangeNum(1);
-        refreshColor();
         ObjectAnimator textOffsetY = ObjectAnimator.ofFloat(this, "textOffsetY", 0, -mTextSize);
         textOffsetY.setDuration(ANIM_DURATION);
         textOffsetY.start();
@@ -203,16 +188,12 @@ public class ScrollTextView extends View {
 
     private void unPraise() {
         calculateChangeNum(-1);
-        refreshColor();
         ObjectAnimator textOffsetY = ObjectAnimator.ofFloat(this, "textOffsetY", 0, mTextSize);
         textOffsetY.setDuration(ANIM_DURATION);
         textOffsetY.start();
 
     }
 
-    private boolean canClick() {
-        return mClickTextColor != 0 && mOriginValue > 0;
-    }
 
     /**
      * 计算不变，原来，和改变后各部分的数字
@@ -257,19 +238,6 @@ public class ScrollTextView extends View {
 
     }
 
-    private void refreshColor() {
-        boolean canClick = canClick();
-        setEnabled(canClick);
-        if (canClick) {
-            mTextPaint.setColor(mClickTextColor);
-            mTextStartColor = mClickTextColor;
-        } else {
-            mTextPaint.setColor(mTextColor);
-            mTextStartColor = mTextColor;
-        }
-        mTextEndColor = ColorUtils.setAlphaComponent(mTextStartColor, 0);
-    }
-
 
     /**
      * 是否有进位或者退位
@@ -291,9 +259,10 @@ public class ScrollTextView extends View {
         if (mChange != 0) {
             //字体滚动
             float fraction = (mTextSize - Math.abs(mOldOffsetY)) / mTextSize;
-            mTextPaint.setColor(evaluate(fraction, mTextEndColor, mTextStartColor));
+            Log.e("drawText", "drawText" + fraction);
+            mTextPaint.setColor(ColorUtils.setAlphaComponent(mTextColor, (int) (fraction * 255)));
             canvas.drawText(String.valueOf(mChangeNumbers[1]), mSingleTextWidth * mChangeNumbers[0].length() + mStartX, y + mOldOffsetY, mTextPaint);
-            mTextPaint.setColor(evaluate(fraction, mTextStartColor, mTextEndColor));
+            mTextPaint.setColor(ColorUtils.setAlphaComponent(mTextColor, (int) ((1 - fraction) * 255)));
             canvas.drawText(String.valueOf(mChangeNumbers[2]), mSingleTextWidth * mChangeNumbers[0].length() + mStartX, y + mNewOffsetY, mTextPaint);
         }
 
