@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ScrollTextView">
+        <attr name="sv_textColor" format="color|reference"/>
+        <attr name="sv_textSize" format="dimension|reference"/>
+    </declare-styleable>
+    <declare-styleable name="PraiseView">
+        <attr name="pv_textColor" format="color|reference"/>
+        <attr name="pv_textSize" format="dimension|reference"/>
+        <attr name="pv_praise_imageSrc" format="reference"/>
+        <attr name="pv_unPraise_imageSrc" format="reference"/>
+        <attr name="pv_clickColor" format="color|reference"/>
+    </declare-styleable>
+</resources>
