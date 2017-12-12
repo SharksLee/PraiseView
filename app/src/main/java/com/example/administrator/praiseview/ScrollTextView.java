@@ -160,6 +160,7 @@ public class ScrollTextView extends View {
     public void bindData(int value) {
         mOriginValue = value;
         calculateChangeNum(0);
+        requestLayout();
         postInvalidate();
     }
 
